@@ -25,7 +25,6 @@ import org.kabeja.math.Bounds;
 import org.kabeja.math.Extrusion;
 import org.kabeja.math.Point3D;
 import org.kabeja.math.TransformContext;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**

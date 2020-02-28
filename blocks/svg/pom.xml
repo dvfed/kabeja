@@ -13,6 +13,7 @@
         <groupId>org.kabeja</groupId>
         <artifactId>tfly-kabeja</artifactId>
         <version>0.5.2</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <build>
@@ -28,7 +29,7 @@
                         </manifest>
                     </archive>
                 </configuration>
-                <version>2.3.1</version>
+                <version>3.1.2</version>
             </plugin>
         </plugins>
     </build>
@@ -47,12 +48,12 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-swing</artifactId>
-            <version>1.8</version>
+            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
-            <version>1.8</version>
+            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
-            <version>1.1</version>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avalon.framework</groupId>
