@@ -86,7 +86,7 @@ public class Loader {
             File f = new File((String)i.next());
 
             try {
-                if (f.isDirectory() && f.exists()) {
+                if (f.exists() && f.isDirectory()) {
                     File[] files = f.listFiles();
 
                     for (int x = 0; x < files.length; x++) {
@@ -96,9 +96,10 @@ public class Loader {
                             urls.add(files[x].toURI().toURL());
                         }
                     }
+
+                    urls.add(f.toURI().toURL());
                 }
 
-                urls.add(f.toURI().toURL());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

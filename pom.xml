@@ -18,6 +18,7 @@ to jpeg, tiff, png and pdf are included.
     <url>http://kabeja.sourceforge.net/</url>
 
     <modules>
+        <module>loader</module>
         <module>core</module>
     </modules>
 
