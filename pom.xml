@@ -25,13 +25,19 @@ to jpeg, tiff, png and pdf are included.
         <profile>
             <id>blocks</id>
             <modules>
-                <module>blocks/acis</module>
+                <!-- module>blocks/acis</module -->
                 <module>blocks/dxf</module>
                 <module>blocks/ui</module>
-                <module>blocks/inkscape</module>
+                <!-- module>blocks/inkscape</module -->
                 <module>blocks/svg</module>
                 <module>blocks/xslt</module>
                 <!-- module>blocks/cocoon</module -->
+            </modules>
+        </profile>
+        <profile>
+            <id>dist</id>
+            <modules>
+                <module>assembly</module>
             </modules>
         </profile>
     </profiles>
@@ -147,6 +153,15 @@ to jpeg, tiff, png and pdf are included.
                 <version>3.1.2</version>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>3.2.0</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
     </build>
     <dependencies>
         <dependency>
