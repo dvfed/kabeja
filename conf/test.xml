@@ -19,8 +19,11 @@
 	    | The processing configuration  
 	    +-->
 	<configuration>
-	   <parser key="dxf" name="DXF-Parser" parser-factory="org.kabeja.dxf.parser.DXFParserFactory"/>
-	
+
+        <parsers>
+            <parser name="dxf" factory="org.kabeja.dxf.parser.DXFParserFactory"/>
+        </parsers>
+
 	    <!--+
 	        | If you want to configure the parser you can change the parser.xml and use it here or
                 | register your own parser for other input formats
@@ -117,7 +120,18 @@
 	    +-->
 	
 	<pipelines>
-	  <pipeline name="test">
+    
+	  <pipeline name="png" description="Converts the draft to PNG">
+	  	  <saxgenerate name="svg">
+			<property name="stroke-width" value="22"/>
+			<serialize name="png">
+			   <property name="width" value="1024"/>
+			   <property name="height" value="768"/>
+			</serialize>
+		  </saxgenerate>	
+	  </pipeline>
+
+	  <pipeline name="jpeg" description="Converts the draft to JPEG">
 	  	  <saxgenerate name="svg">
 			<property name="stroke-width" value="22"/>
 			<serialize name="jpeg">
@@ -126,6 +140,21 @@
 			</serialize>
 		  </saxgenerate>	
 	  </pipeline>
-	
+
+	  <pipeline name="pdf" description="Converts the draft to PDF">
+	  	  <saxgenerate name="svg">
+			<property name="stroke-width" value="22"/>
+			<serialize name="pdf"/>
+		  </saxgenerate>	
+	  </pipeline>	
+
+	  <pipeline name="svg" description="Converts the draft to SVG">
+	  	  <saxgenerate name="svg">
+			<property name="stroke-width" value="22"/>
+			<serialize name="svg"/>
+		  </saxgenerate>	
+	  </pipeline>	
+
 	</pipelines>
+
 </processing>
