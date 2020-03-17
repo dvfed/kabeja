@@ -2,46 +2,53 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
-  <id>dist</id>
-  <formats>
-    <format>dir</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <!-- dependencySets>
-      <dependencySet>
-          <useProjectArtifact>false</useProjectArtifact>
-          <useTransitiveDependencies>true</useTransitiveDependencies>
-          <outputDirectory>lib</outputDirectory>
-          <unpack>false</unpack>
-          <excludes>
-            <exclude>${project.groupId}:*:*</exclude>
-          </excludes>
-      </dependencySet>
-  </dependencySets -->
-  <moduleSets>
-    <moduleSet>
-      <!-- Enable access to all projects in the current multimodule build! -->
-      <useAllReactorProjects>true</useAllReactorProjects>
-      <!-- Now, select which projects to include in this module-set. -->
-      <!-- includes>
-        <include>org.kabeja:core</include>
-        <include>org.kabeja:dxf</include>
-        <include>org.kabeja:ui</include>
-      </includes -->
-      <binaries>
-        <outputDirectory></outputDirectory>
-        <!-- outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping -->
-        <unpack>false</unpack>
-      </binaries>
-    </moduleSet>
-  </moduleSets>
-    <!-- fileSets>
+
+    <id>dist</id>
+
+    <formats>
+        <format>dir</format>
+    </formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory></outputDirectory>
+            <outputFileNameMapping>launcher.jar</outputFileNameMapping>
+            <includes>
+                <include>${project.groupId}:tfly-kabeja-loader:jar</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>${project.groupId}:tfly-kabeja-loader:jar</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
         <fileSet>
             <directory>${project.build.directory}/../..</directory>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>conf/*.xml</include>
+                <!-- include>conf/process.xml</include -->
+                <include>samples/dxf/*.dxf</include>
+                <include>doc/*.*</include>
+                <include>legal/*.*</include>
+                <include>INSTALL.md</include>
+                <include>README.md</include>
             </includes>
         </fileSet>
-    </fileSets -->
+    </fileSets>
+
+    <files>
+        <file>
+            <source>${project.build.directory}/../../conf/test.xml</source>
+            <outputDirectory></outputDirectory>
+            <destName>conf/process.xml</destName>
+        </file>
+    </files>    
+
 </assembly>

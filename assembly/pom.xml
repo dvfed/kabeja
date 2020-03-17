@@ -22,6 +22,11 @@
   <dependencies>
     <dependency>
         <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-loader</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.kabeja</groupId>
         <artifactId>tfly-kabeja-core</artifactId>
         <version>${project.version}</version>
     </dependency>
