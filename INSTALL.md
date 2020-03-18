@@ -1,8 +1,12 @@
+## Download
 There are no up-to-date binary packages.
+Old versions can be found [here](http://kabeja.sourceforge.net).
 
-## Building Kabeja
+## Building
 Kabeja is structured as a multi-module Maven project.
-The root POM only depends on the core.
+The root POM with no profile selected builds the core and lancher.
+Select `blocks` profile to build submodules.
+Select `blocks` and `dist` to make a distribution with all the dependencies included.
 
 ```
 # kabeja-core
@@ -10,17 +14,19 @@ mvn compile
 mvn install
 
 # DXF, SVG, ...
-mvn -P blocks compile
 mvn -P blocks install
 
-# single submodule
-mvn -P blocks -pl blocks/svg -am install
+# single DXF submodule
+mvn -P blocks -pl blocks/dxf -am install
+
+# distribution (result will be placed to assembly/target)
+mvn -P blocks,dist install
 ```
 
-Note: before building a legacy lib has to be installed, see blocks/ui/install-legacy-lib.sh
+Note: A legacy library has to be installed before building. See `blocks/ui/install-legacy-lib.sh`.
 
-## IDE like Eclipse/Netbeans:
+### IDE like Eclipse/Netbeans/IDEA
 
-You can import it as an existing Maven repository.
+You can import the sources as an existing Maven project.
 
 Eclipse will automatically create a project for each Maven submodule.
