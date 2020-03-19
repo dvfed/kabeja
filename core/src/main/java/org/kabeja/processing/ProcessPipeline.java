@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kabeja.DraftDocument;
+import org.kabeja.io.GenerationException;
 import org.kabeja.processing.helper.MergeMap;
 import org.kabeja.processing.xml.SAXFilterConfig;
 
@@ -62,6 +63,11 @@ public class ProcessPipeline {
 			pp.setProperties(oldProps);
 		}
 
+		try {
+			generator.generate(doc, context, out);
+		} catch (GenerationException e) {
+			throw new ProcessorException(e);
+		}
 	}
 
 	/**

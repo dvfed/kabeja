@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>tfly-kabeja-dist</artifactId>
+    <name>Kabeja Distribution</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja</artifactId>
+        <version>0.5.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+ 
+  <!-- NOTE: These dependency declarations are only required to sort this project to the 
+       end of the line in the multimodule build. 
+  -->
+  <dependencies>
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-loader</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-core</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-dxf</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <!-- dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-acis</artifactId>
+        <version>${project.version}</version>
+    </dependency -->
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-svg</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-ui</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-xslt</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <!-- dependency>
+        <groupId>org.kabeja</groupId>
+        <artifactId>tfly-kabeja-inkscape</artifactId>
+        <version>${project.version}</version>
+    </dependency -->
+  </dependencies>
+ 
+  <build>
+    <finalName>kabeja</finalName>
+    <plugins>
+      <!-- plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <transformationSets>
+            <transformationSet>
+              <dir>xml</dir>
+              <stylesheet>it4.xsl</stylesheet>
+            </transformationSet>
+          </transformationSets>
+        </configuration>
+      </plugin -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/dist.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

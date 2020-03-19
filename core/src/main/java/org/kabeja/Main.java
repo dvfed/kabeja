@@ -18,8 +18,6 @@ package org.kabeja;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth </a>
  * 
@@ -27,64 +25,57 @@ import java.util.Map;
  */
 public class Main {
 	
-	public static String DEFAULT_APP="org.kabeja.ui.UIApplication"; 
-	public static String CLI_APP="org.kabeja.CLIApplication"; 
-	
+	public static String DEFAULT_APP = "org.kabeja.ui.UIApplication";
+	public static String CLI_APP = "org.kabeja.CLIApplication";
+
 	public Main() {
-	
-	
+
 	}
 
 	public static void main(String[] args) {
-			
 		Main main = new Main();
-        Map<String, String> settings = main.parseParameters(args);
-        String launchClass = null;
-        if(settings.containsKey("cli")){
-        	launchClass = CLI_APP;
-        }else{
-        	launchClass = DEFAULT_APP;
-        }
+		Map<String, String> settings = main.parseParameters(args);
 
-        try {
-			Class clazz  =  main.getClass().getClassLoader().loadClass(launchClass);
-			Application app = (Application)clazz.newInstance();
+		String launchClass = null;
+		if (settings.containsKey("cli")) {
+			launchClass = CLI_APP;
+		} else {
+			launchClass = DEFAULT_APP;
+		}
+
+		try {
+			Class<?> clazz = main.getClass().getClassLoader().loadClass(launchClass);
+			Application app = (Application) clazz.newInstance();
 			app.start(settings);
-			
 		} catch (Exception e) {
-		
 			e.printStackTrace();
 		}
-        
 	}
-	
-	
-	   protected Map<String, String> parseParameters(String[] args){
-	    	Map<String, String> parameters = new HashMap<String, String>();
-	    	String key = null;
-	    	for(int i=0;i<args.length;i++){
-	    		if(args[i].startsWith("-")|| args[i].startsWith("--")){
-	    			if(key!=null){
-	    				//option set before
-	    			    parameters.put(key, "true");	
-	    			 	
-	    			}
-	    			key=args[i].replaceAll("^-+", "");
-	    			
-	    			
-	    		}else{
-	    			//value for key
-	    			parameters.put(key,args[i]);
-	    			key=null;
-	    			
-	    		}
-	    		
-	    	}
-	    	
-	    	return parameters;
-	    	
-	    }
-	    
 
+	protected Map<String, String> parseParameters(String[] args) {
+		Map<String, String> parameters = new HashMap<>();
+
+		String key = null;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].startsWith("-") || args[i].startsWith("--")) {
+				if (key != null) {
+					// option set before
+					parameters.put(key, "true");
+				}
+				key = args[i].replaceAll("^-+", "");
+			} else {
+				// value for key
+				parameters.put(key, args[i]);
+				key = null;
+			}
+		}
+
+		if (key != null) {
+			// option set before
+			parameters.put(key, "true");
+		}
+
+		return parameters;
+	}
 
 }

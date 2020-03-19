@@ -4,4 +4,9 @@ target/
 .settings/
 .classpath
 bin/
+*.iml
 .idea/
+.vscode/
+.mvn/
+mvnw
+mvnw.cmd

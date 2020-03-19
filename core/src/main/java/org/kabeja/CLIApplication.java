@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 package org.kabeja;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,106 +28,99 @@ import org.kabeja.processing.ProcessPipeline;
 import org.kabeja.processing.ProcessingManager;
 import org.kabeja.processing.xml.SAXProcessingManagerBuilder;
 
-public class CLIApplication implements Application{
-
+public class CLIApplication implements Application {
 	
+	private String processFile;
 	private String sourceFile;
 	private String destinationFile;
 
-	@SuppressWarnings("unused")
-	private boolean process = false;
-	@SuppressWarnings("unused")
-	private boolean directoryMode = true;
+	private boolean optionsIncomplete = false;
+
 	private ProcessingManager processorManager;
 	private String pipeline;
 	
+	public void start(Map<String, String> properties) {
+		// setup application
+		if (properties.containsKey("pp")) {
+			this.processFile = (String) properties.get("pp");
+		} else {
+			this.processFile = "conf/process.xml";
+		}
 
-	
-	
-	
-    public void start(Map<String, String> properties) {
-    	//setup application
-    	if(properties.containsKey("pp")){
-    		try {
-				this.setProcessConfig(new FileInputStream((String)properties.get("pp")));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-    	}
-    	
-    	if(properties.containsKey("pipeline")){
-    	    this.setPipeline((String)properties.get("pipeline"));	
-    	}
-        if(properties.containsKey("in")){
-             this.setSourceFile((String)properties.get("in"));
-        }
-    	if(properties.containsKey("o")){
-    	   this.setDestinationFile((String)properties.get("o"));	
-    	}
-        
+		if (properties.containsKey("pipeline")) {
+			this.setPipeline((String) properties.get("pipeline"));
+		} else {
+			this.optionsIncomplete = true;
+		}
 
+		if (properties.containsKey("in")) {
+			this.setSourceFile((String) properties.get("in"));
+		} else {
+			this.optionsIncomplete = true;
+		}
+
+		if (properties.containsKey("o")) {
+			this.setDestinationFile((String) properties.get("o"));
+		}
 
 		this.initialize();
 
-		if (properties.containsKey("help")) {
+		if (optionsIncomplete || properties.containsKey("help")) {
 			printUsage();
-			this.printPipelines();
-		} else {
-			this.process();
+			printPipelines();
+			return;
 		}
-        
-    }
 
-    public void stop() {
-      //not needed
-        
-    }
-    
-    
-	private static void printUsage() {
-		System.out
-				.println("\n Use: java -jar kabeja.jar <Options> "
-						+ "\n\nOptions:\n"
-						+ "  --help shows this and exit\n"
-						+ "  -pp process.xml set processing file to use\n"
-						+ "  -pipeline name  process the given pipeline\n\n"
-						+ "  -o  <Output file or directory>\n"
-						+ "  -in <Input file or directroy>\n");
+		process();
+	}
+
+	public void stop() {
+		// not needed
 	}
 
 	public void initialize() {
-		if (this.processorManager == null) {
-			this.setProcessConfig(this.getClass().getResourceAsStream(
-					"/conf/process.xml"));
+		try (InputStream in = new FileInputStream(this.processFile)) {
+			this.setProcessConfig(in);
+		} catch (IOException e) {
+			System.out.println("Can't find process config file: " + this.processFile);
+			this.optionsIncomplete = true;
 		}
 	}
 
 	public void process() {
+		File source = new File(this.sourceFile);
+		if (! source.exists()) {
+			System.out.println("Can't find input file or directory: " + this.sourceFile);
+			return;
+		}
 
-			File f = new File(this.sourceFile);
+		String destSuffix = this.processorManager.getProcessPipeline(pipeline).getGenerator().getSuffix();
 
-			if (f.exists() && f.isFile()) {
-				parseFile(f, this.destinationFile);
-			} else if (f.isDirectory()) {
-				File[] files = f.listFiles();
-                File destination = null; 
-				if(this.destinationFile != null){
-                	 destination = new File(this.destinationFile);
-                	 destination = destination.isDirectory() ? destination : destination.getParentFile();
-                 }else{
-                	 destination = f;
-                 }
-				 for (int i = 0; i < files.length; i++) {
-					       String file = files[i].getName();
-					       String[] parts = file.split("."); 
-					       File result = new File(destination.getAbsolutePath(),parts[0]+"."+this.processorManager.getProcessPipeline(pipeline).getGenerator().getSuffix());
-							parseFile(files[i], result.getAbsolutePath());
-						
-					}
-				}
+		if (source.isFile()) {
+			if (this.destinationFile == null) {
+				this.destinationFile = this.sourceFile.split("\\.")[0] + "." + destSuffix;
+			}
+			System.out.println("Converting " + source.getName() + " to " + this.destinationFile);
+			parseFile(source, this.destinationFile);
+		} else if (source.isDirectory()) {
+			File destination = null;
+			if (this.destinationFile != null) {
+				destination = new File(this.destinationFile);
+				destination = destination.isDirectory() ? destination : destination.getParentFile();
+			} else {
+				destination = source;
+			}
+			
+			File[] files = source.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				String file = files[i].getName();
+				String[] parts = file.split("\\.");
+				File result = new File(destination.getAbsolutePath(), parts[0] + "." + destSuffix);
+				System.out.println("Converting " + file + " to " + result);
+				parseFile(files[i], result.getAbsolutePath());
+			}
+		}
 	}
-
-
 
 	public String getSourceFile() {
 		return sourceFile;
@@ -144,25 +136,7 @@ public class CLIApplication implements Application{
 
 	public void setDestinationFile(String destinationFile) {
 		this.destinationFile = destinationFile;
-		this.directoryMode = false;
 	}
-
-	private void parseFile(File f, String output) {
-		try {
-		
-            String extension = f.getName().toLowerCase();
-            int index =extension.lastIndexOf('.');
-            if(index >-1&& index+1<extension.length()){
-            	extension = extension.substring(index+1);
-            }
-		    this.processorManager.process(new FileInputStream(f), extension, new HashMap<String, Object>(), pipeline, new FileOutputStream(output));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 
 	public void setProcessConfig(InputStream in) {
 		this.processorManager = SAXProcessingManagerBuilder.buildFromStream(in);
@@ -170,29 +144,61 @@ public class CLIApplication implements Application{
 
 	public void setPipeline(String name) {
 		this.pipeline = name;
-		this.process = true;
 	}
 
+	private void parseFile(File source, String output) {
+		try {
+			String extension = source.getName().toLowerCase();
+			int index = extension.lastIndexOf('.');
+			if (index > -1 && index + 1 < extension.length()) {
+				extension = extension.substring(index + 1);
+			}
 
+			this.processorManager.process(
+					new FileInputStream(source),
+					extension,
+					new HashMap<String, Object>(),
+					pipeline,
+					new FileOutputStream(output)
+			);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	public void printPipelines() {
-		Iterator<String> i = this.processorManager.getProcessPipelines().keySet()
-				.iterator();
-		System.out.println("\n Available pipelines:\n----------\n");
+	private void printUsage() {
+		System.out
+				.println("\nUsage: java -jar launcher.jar -cli <Options>"
+						+ "\n\nOptions:\n"
+						+ "  --help shows this and exit\n"
+						+ "  -pp process.xml set processing file to use\n"
+						+ "      defaults to 'conf/process.xml'\n"
+						+ "  -pipeline name  process the given pipeline\n"
+						+ "  -in <Input file or directory>\n"
+						+ "  -o  <Output file or directory>\n"
+						+ "      defaults to <input> with extension depending on pipeline\n"
+				);
+	}
 
+	private void printPipelines() {
+		if (this.processorManager == null) {
+			System.out.println("No pipelines available.");
+			return;
+		}
+
+		System.out.println("Available pipelines:");
+		System.out.println("----------------------");
+		
+		Iterator<String> i = this.processorManager.getProcessPipelines().keySet().iterator();
 		while (i.hasNext()) {
 			String pipeline = (String) i.next();
-			ProcessPipeline pp = this.processorManager
-					.getProcessPipeline(pipeline);
-			System.out.print(" " + pipeline);
+			ProcessPipeline pp = this.processorManager.getProcessPipeline(pipeline);
+			System.out.print("  " + pipeline);
 			if (pp.getDescription().length() > 0) {
 				System.out.print("\t" + pp.getDescription());
-
 			}
 			System.out.println();
 		}
 	}
-
-	
 
 }

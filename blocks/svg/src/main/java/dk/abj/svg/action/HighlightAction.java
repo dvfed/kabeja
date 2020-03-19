@@ -44,7 +44,7 @@ import java.awt.event.ItemListener;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.kabeja.DraftDocument;
 import org.kabeja.common.DraftEntity;
 import org.kabeja.common.Layer;

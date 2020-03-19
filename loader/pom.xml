@@ -5,18 +5,19 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>tfly-kabeja-ui</artifactId>
-    <name>Kabeja UI module</name>
+    <artifactId>tfly-kabeja-loader</artifactId>
+    <name>Kabeja Loader</name>
+    <description>Kabeja start launcher</description>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.kabeja</groupId>
         <artifactId>tfly-kabeja</artifactId>
         <version>0.5.2</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
-   
+
     <build>
+        <finalName>launcher</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -24,7 +25,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.kabeja.ui.Main</mainClass>
+                            <mainClass>org.kabeja.Loader</mainClass>
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
@@ -33,20 +34,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.kabeja</groupId>
-            <artifactId>tfly-kabeja-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.miethxml</groupId>
-            <artifactId>miethxml-ui</artifactId>
-            <version>0.0.1</version>
-            <!-- miethxml-ui.jar library has to be installed to the local maven repository -->
-            <!-- <scope>system</scope> -->
-            <!-- <systemPath>${project.basedir}/legacy-lib/miethxml-ui.jar</systemPath> -->
-        </dependency>
-    </dependencies>
 </project>
