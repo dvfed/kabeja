@@ -34,6 +34,7 @@
             <outputDirectory></outputDirectory>
             <includes>
                 <!-- include>conf/process.xml</include -->
+                <!-- include>conf/ui.xml</include -->
                 <include>samples/dxf/*.dxf</include>
                 <include>doc/*.*</include>
                 <include>legal/*.*</include>
@@ -48,6 +49,11 @@
             <source>${project.build.directory}/../../conf/test.xml</source>
             <outputDirectory></outputDirectory>
             <destName>conf/process.xml</destName>
+        </file>
+        <file>
+            <source>${project.build.directory}/../../conf/test-ui.xml</source>
+            <outputDirectory></outputDirectory>
+            <destName>conf/ui.xml</destName>
         </file>
     </files>    
 
