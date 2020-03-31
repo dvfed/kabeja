@@ -30,3 +30,14 @@ Note: A legacy library has to be installed before building. See `blocks/ui/insta
 You can import the sources as an existing Maven project.
 
 Eclipse will automatically create a project for each Maven submodule.
+
+## Debugging
+
+Launch Kabeja, then start a remote debug session in your IDE attaching to `localhost:5005`:
+```
+#cli
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar launcher.jar -cli -in sample\dxf\draft1.dxf -pipeline svg
+
+#gui
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar launcher.jar
+```

@@ -179,14 +179,11 @@ public class SVGUtils {
 		if (id.length() > 0) {
 			if (id.startsWith(DEFAULT_ID_NAME_PREFIX)) {
 				try {
-					return Long.parseLong(id.substring(DEFAULT_ID_NAME_PREFIX.length() - 1));
+					return Long.parseLong(id.substring(DEFAULT_ID_NAME_PREFIX.length()));
 				} catch (Exception e) {
-					// no dxf generated id
-					e.printStackTrace();
-
+					// no dxf generated id - ignoring
 				}
 			}
-
 		}
 		return -1;
 	}

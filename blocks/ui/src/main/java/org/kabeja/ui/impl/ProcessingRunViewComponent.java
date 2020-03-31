@@ -256,9 +256,8 @@ public class ProcessingRunViewComponent implements ViewComponent, Serviceable,
 				
 				// we have to parse every file
 				for (int i = 0; i < files.length; i++) {
-				
+					this.parseFile(files[i]);
 					this.processFile(files[i]);
-				
 				}
 
 				// file already parsed
@@ -273,49 +272,28 @@ public class ProcessingRunViewComponent implements ViewComponent, Serviceable,
 	}
 
 	protected void processFile(File f) {
-		String ext = f.getAbsolutePath();
-		int index = ext.lastIndexOf(".");
-
-		if ((index + 1) < ext.length()) {
-			ext = ext.substring(index + 1);
-
-			try {
-				this.logView.append(Messages
-						.getString("ProcessingRunViewComponent.log.processing")
-						+ f.getAbsolutePath() + "\n");
-
-				File out = null;
-				if (this.autogenerateOutput) {
-					out = new File(f.getAbsolutePath().substring(0, index)
-							+ "."
-							+ this.manager.getProcessPipeline(
-									this.processingPipeline).getGenerator()
-									.getSuffix());
-
-				} else {
-					JFileChooser fc = new JFileChooser(this.baseDir);
-					int value = fc.showSaveDialog(null);
-
-					if (value == JFileChooser.APPROVE_OPTION) {
-						out = fc.getSelectedFile();
-					}
-				}
-				this.manager.process(new FileInputStream(f), ext,
-						new HashMap(), this.processingPipeline,
-						new FileOutputStream(out));
-
-				this.manager.process(doc, this.properties,
-						this.processingPipeline, new FileOutputStream(out));
-				this.log(Messages
-						.getString("ProcessingRunViewComponent.log.finished")
-						+ out.getAbsolutePath() + "\n");
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				this.logException(e);
+		String path = f.getAbsolutePath();
+		this.logView.append(Messages.getString("ProcessingRunViewComponent.log.processing") + path + "\n");
+		
+		File out = null;
+		if (this.autogenerateOutput) {
+			String suffix = this.manager.getProcessPipeline(this.processingPipeline).getGenerator().getSuffix();
+			out = new File(path.substring(0, path.lastIndexOf(".")) + "." + suffix);
+		} else {
+			JFileChooser fc = new JFileChooser(this.baseDir);
+			int value = fc.showSaveDialog(null);
+			if (value == JFileChooser.APPROVE_OPTION) {
+				out = fc.getSelectedFile();
 			}
 		}
-
+		
+		try (FileOutputStream ostream = new FileOutputStream(out)) {
+			this.manager.process(doc, this.properties, this.processingPipeline, ostream);
+			this.log(Messages.getString("ProcessingRunViewComponent.log.finished") + out.getAbsolutePath() + "\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.logException(e);
+		}
 	}
 
 	protected void chooseInput() {
@@ -327,10 +305,7 @@ public class ProcessingRunViewComponent implements ViewComponent, Serviceable,
 
 		JPanel p = new JPanel(new FlowLayout());
 		p.add(cb);
-		p
-				.add(new JLabel(
-						Messages
-								.getString("ProcessingRunViewComponent.file.dialog.autogenerate")));
+		p.add(new JLabel(Messages.getString("ProcessingRunViewComponent.file.dialog.autogenerate")));
 		fc.setAccessory(p);
 
 		int value = fc.showOpenDialog(null);
@@ -338,23 +313,19 @@ public class ProcessingRunViewComponent implements ViewComponent, Serviceable,
 		if (value == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			this.autogenerateOutput = cb.isSelected();
+			this.sourceFile = file;
 
 			if (file.isFile()) {
 				this.baseDir = file.getParent();
-				
 				this.processInput(file);
 			} else if (file.isDirectory()) {
 				this.baseDir = file.getAbsolutePath();
-				this
-						.log(Messages
-								.getString("ProcessingRunViewComponent.log.select.directory")
-								+ file.getAbsolutePath() + "\n");
+				this.log(Messages.getString("ProcessingRunViewComponent.log.select.directory")
+						+ file.getAbsolutePath() + "\n");
 				this.log("No preview\n");
 			}
 		}
 	}
-
-
 
 	protected void propagateDraftDocument(DraftDocument doc) throws Exception {
 		Iterator i = this.viewComponents.iterator();
@@ -414,19 +385,21 @@ public class ProcessingRunViewComponent implements ViewComponent, Serviceable,
 	}
 
 	public void processInput(File file) {
-	 if(file.isFile()){
-
 		try {
-            String extension = IOUtils.getFileExtension(file);
-			Parser p = this.manager.getParser(extension);
-			this.doc = p.parse(new FileInputStream(file),new HashMap());
+			this.parseFile(file);
 			this.fireDraftDocumentChangeEvent();
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.logException(e);
 		}
-	 }
 	}
+
+	private void parseFile(File file) throws Exception {
+        this.logView.append(Messages.getString("ProcessingRunViewComponent.log.parsing") + file.getAbsolutePath() + "\n");
+		String extension = IOUtils.getFileExtension(file);
+		Parser parser = this.manager.getParser(extension);
+		this.doc = parser.parse(new FileInputStream(file), new HashMap());
+    }
 
 	private class ViewControl implements ItemListener {
 		private JComponent view;

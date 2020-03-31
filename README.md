@@ -7,7 +7,10 @@ It is licensed under the Apache Software License 2.0.
 The original project and documentation can be found [here](http://kabeja.sourceforge.net).
 
 ## Current state
-The original Kabeja project has not been updated since 2010. Third parties have since worked on the library. Most importantly the build system was changed from Ant to Maven. Unfortunately this left parts of the program in a partially broken state. The library part itself works but _the GUI is broken and the CLI works with some restrictions_.
+The original Kabeja project has not been updated since 2010. Third parties have since worked on the library.
+Most importantly the build system was changed from Ant to Maven.
+Unfortunately this left parts of the program in a partially broken state.
+The library part itself works but _the GUI and the CLI works with some restrictions_.
 
 This fork is intended to make Kabeja run on Java 11. The sources should be Java 8 compatible though.
 
@@ -54,7 +57,9 @@ In the Kabeja-folder try:
 If you experience OOM problems, try `java -Xmx256m`
 
 ## GUI
-The GUI is currently broken.
+Just run the launcher with no args:
+
+  `java -jar launcher.jar`
 
 ## DXF
 DXF module can be used as a standalone library. It depends on the core only.
