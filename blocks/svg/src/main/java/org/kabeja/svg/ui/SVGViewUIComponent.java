@@ -246,7 +246,7 @@ public class SVGViewUIComponent implements DraftDocumentViewComponent,
             Object obj = i.next();
 
             if (obj instanceof DraftDocumentAction) {
-                ((DraftDocumentAction) obj).setDXFDocument(doc);
+                ((DraftDocumentAction) obj).setDraftDocument(doc);
             }
         }
 
@@ -358,7 +358,7 @@ public class SVGViewUIComponent implements DraftDocumentViewComponent,
             }
 
             if ((this.doc != null) && action instanceof DraftDocumentAction) {
-                ((DraftDocumentAction) action).setDXFDocument(this.doc);
+                ((DraftDocumentAction) action).setDraftDocument(this.doc);
             }
         }
     }

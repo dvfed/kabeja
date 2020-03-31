@@ -42,6 +42,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -71,7 +72,7 @@ public class HighlightAction extends AbstractAction implements SVGDocumentAction
     private Element labelID;
     private Node text;
     private String oldStyle;
-    private DraftDocument dxfDocument;
+    private DraftDocument draftDocument;
     protected double STROKE_WIDTH_PRECENTS = 0.002;
     protected double strokeWidth = 0.5;
     protected double fontSize = 12;
@@ -79,10 +80,11 @@ public class HighlightAction extends AbstractAction implements SVGDocumentAction
     protected boolean activated = false;
 
     public HighlightAction() {
-        super("Highlight",
-            new ImageIcon(UIUtils.resourceToBytes(HighlightAction.class,
-                    ("/icons/highlight.png")),
-                Messages.getString("editor.action.highlight")));
+        super();
+        super.putValue(Action.SMALL_ICON,
+            new ImageIcon(UIUtils.resourceToBytes(this.getClass(), "/icons/highlight.png")));
+        super.putValue(SHORT_DESCRIPTION,
+            Messages.getString("editor.action.highlight"));
     }
 
     public HighlightAction(String b) {
@@ -213,14 +215,14 @@ public class HighlightAction extends AbstractAction implements SVGDocumentAction
         //					+ screen.getE());
         //			 
         long handle = SVGUtils.reverseID(el.getAttribute("id"));
-        DraftEntity entity = this.dxfDocument.getEntityByID(handle);
-        Layer layer =  entity.getLayer();
-        System.out.println("Selected Entity=" + handle);
-
-        if (entity != null) {
-            System.out.println("Selected Entity-type=" + entity.getType());
-        } else {
-            System.out.println("No entity found for handle=" + handle);
+        if (handle != -1) {
+            DraftEntity entity = this.draftDocument.getEntityByID(handle);
+            if (entity != null) {
+                Layer layer =  entity.getLayer();
+                System.out.printf("Selected Entity=%d Type=%s Layer=%s%n", handle, entity.getType().getName(), layer.getName());
+            } else {
+                System.out.println("No entity found for handle=" + handle);
+            }
         }
 
         //
@@ -228,7 +230,7 @@ public class HighlightAction extends AbstractAction implements SVGDocumentAction
         //			this.labelID.setTextContent("Handle="+handle);
     }
 
-    public void setDXFDocument(DraftDocument doc) {
-        this.dxfDocument = doc;
+    public void setDraftDocument(DraftDocument doc) {
+        this.draftDocument = doc;
     }
 }

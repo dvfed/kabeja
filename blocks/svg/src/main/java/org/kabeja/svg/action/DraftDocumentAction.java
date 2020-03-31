@@ -20,5 +20,5 @@ import org.kabeja.DraftDocument;
 
 
 public interface DraftDocumentAction extends ViewerAction {
-    public void setDXFDocument(DraftDocument doc);
+    public void setDraftDocument(DraftDocument doc);
 }
